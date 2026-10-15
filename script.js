@@ -49,6 +49,27 @@ document.querySelectorAll('.cad-image-frame, .bicycle-project-image').forEach(fr
     if (image.complete && image.naturalWidth === 0) showPlaceholder();
 });
 
+document.querySelectorAll('[data-video-player]').forEach(frame => {
+    const video = frame.querySelector('video');
+    const placeholder = frame.querySelector('.benchvice-video-placeholder');
+    const message = placeholder?.querySelector('small');
+    if (!video || !placeholder || !message) return;
+
+    const showVideo = () => {
+        video.hidden = false;
+        placeholder.hidden = true;
+    };
+
+    video.addEventListener('loadeddata', showVideo, { once: true });
+    video.addEventListener('error', () => {
+        video.hidden = true;
+        placeholder.hidden = false;
+        message.textContent = 'Video could not be loaded. Check the file and try again.';
+    });
+
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) showVideo();
+});
+
 lightbox.querySelector('.lightbox-close').addEventListener('click', () => lightbox.close());
 lightbox.addEventListener('click', event => {
     if (event.target === lightbox) lightbox.close();
